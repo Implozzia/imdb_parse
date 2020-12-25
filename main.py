@@ -1,7 +1,10 @@
 import requests
 import csv
+import logging
 from bs4 import BeautifulSoup
 
+
+logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 def get_html(url):
     r = requests.get(url)
@@ -9,6 +12,7 @@ def get_html(url):
         return r.text
     else:
         print(r.status_code)
+    logging.info('Get html code')
 
 
 def split_cast(string):
@@ -24,8 +28,13 @@ def split_details(string):
     d = d.replace('»', '')
     d = d.replace('See more', '')
     d = d.replace('on IMDbPro', '')
-    d = d.replace('Details', 'Details:\n')
+    d = d.replace('Show more on', '')
+    d = d.replace('IMDbPro', '')
+    d = d.replace('Details', '\nDetails:\n')
     d = d.replace('See full technical specs', '')
+    d = d.replace('Box Office', '\nBox Office:\n')
+    d = d.replace('Company Credits', '\nCompany Credits:\n')
+    d = d.replace('Technical Specs', '\nTechnical Specs:\n')
     return d
 
 
@@ -39,6 +48,7 @@ def write_csv(data):
             data['cast'],
             data['details']
         ))
+    logging.info('Write on csv')
 
 
 def get_data(html):
@@ -78,6 +88,7 @@ def get_data(html):
                 'details': details
                 }
         write_csv(data)
+        logging.info('Get data from URL')
 
 
 def main():
