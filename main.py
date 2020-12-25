@@ -17,6 +17,18 @@ def split_cast(string):
     return c
 
 
+def split_details(string):
+    d = string.replace('\n', '')
+    d = d.replace('Edit', '')
+    d = d.replace('See more', '')
+    d = d.replace('»', '')
+    d = d.replace('See more', '')
+    d = d.replace('on IMDbPro', '')
+    d = d.replace('Details', 'Details:\n')
+    d = d.replace('See full technical specs', '')
+    return d
+
+
 def write_csv(data):
     with open('films.csv', 'a', encoding='utf-8') as f:
         writer = csv.writer(f)
@@ -53,10 +65,9 @@ def get_data(html):
 
         try:
             detailsContent = get_html('https://www.imdb.com' + title.find('a').get('href'))
-
             soup = BeautifulSoup(detailsContent, 'lxml')
-
-            details = soup.find('div', id='titleDetails').text.strip()
+            d = soup.find('div', id='titleDetails').text.strip()
+            details = split_details(d)
         except:
             details = ''
 
@@ -72,8 +83,8 @@ def get_data(html):
 def main():
     pattern = 'https://www.imdb.com/search/title/?title_type=feature&release_date=2000-02-25,2020-05-28&user_rating=4.0,10.0&genres=comedy&countries=us&start=1&ref_=adv_nxt'
 
-    # for i in range(1, 202, 50):
-    #     url = pattern.format(str(i))
+    for i in range(1, 202, 50):
+        url = pattern.format(str(i))
     get_data(get_html(pattern))
 
 
